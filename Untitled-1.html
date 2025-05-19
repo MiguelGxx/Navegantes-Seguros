@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Escudo Digital para Adultos Mayores</title>
+    <!-- ... (Tus estilos, igual que antes) ... -->
+    <style>
+        html { font-size: 16px; }
+        body { font-family: Arial, sans-serif; background: #fff; margin: 0; padding: 0; }
+        /* ... (Resto de tus estilos, igual que antes) ... */
+        /* Copia aquí los estilos del header, mascota, módulos, botonera, etc. de tus versiones anteriores */
+    </style>
+</head>
+<body>
+    <!-- Mascota virtual fija esquina superior izquierda -->
+    <div id="mascota-container">
+        <img id="mascota-img" src="mascota1.png" alt="Mascota virtual">
+        <div id="mascota-text">
+            ¡Hola! Soy tu mascota. ¡Ayúdame a crecer completando los módulos!
+        </div>
+    </div>
+
+    <!-- Pantalla de login -->
+    <div id="login-screen">
+        <div id="login-box">
+            <h2>¡Bienvenido!</h2>
+            <p>Por favor, escribe tu nombre para comenzar:</p>
+            <input type="text" id="nombre-input" placeholder="Tu nombre">
+            <button id="login-btn">Ingresar</button>
+        </div>
+    </div>
+
+    <div id="main-content" style="display:none; position:relative;">
+        <button id="logout-btn" onclick="cerrarSesion()">Cerrar sesión</button>
+        <button id="reset-btn" onclick="resetearProgreso()">Restablecer progreso</button>
+        <div class="header-container">
+            <div class="logo-circle">
+                <img src="ruta/logo.png" alt="Navegantes Seguros">
+            </div>
+            <div class="main-title">
+                Escudo Digital para Adultos Mayores
+            </div>
+        </div>
+        <div class="author">
+            Por Miguel Angel Guevara Montealegre
+        </div>
+        <div id="bienvenida"></div>
+
+        <!-- Botones de módulos -->
+        <div class="modules-container">
+            <div class="modules-row">
+                <button class="module-btn" onclick="window.location.href='modulo1.html'">Módulo 1</button>
+                <button class="module-btn" onclick="window.location.href='modulo2.html'">Módulo 2</button>
+            </div>
+            <div class="modules-row">
+                <button class="module-btn" onclick="window.location.href='modulo3.html'">Módulo 3</button>
+                <button class="module-btn" onclick="window.location.href='modulo4.html'">Módulo 4</button>
+            </div>
+            <div class="modules-row">
+                <button class="module-btn" style="min-width: 300px;" onclick="window.location.href='modulo5.html'">Módulo 5</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botonera central inferior -->
+    <div id="botonera-central">
+        <button class="icon-btn" id="btn-home" title="Inicio">🏠</button>
+        <button class="icon-btn" id="btn-aumentar" title="Aumentar texto">🔎➕</button>
+        <button class="icon-btn" id="btn-disminuir" title="Disminuir texto">🔎➖</button>
+        <button class="icon-btn" id="btn-restablecer" title="Restablecer texto">🔄</button>
+    </div>
+
+    <script>
+    // Etapas de la mascota (debe coincidir con la cantidad de módulos)
+    const etapasMascota = [
+        { img: 'mascota1.png', texto: '¡Hola! Soy tu mascota. ¡Ayúdame a crecer completando los módulos!' },
+        { img: 'mascota2.png', texto: '¡Bien hecho! He crecido un poco. Sigue aprendiendo.' },
+        { img: 'mascota3.png', texto: '¡Genial! Ya estoy más grande. ¡Vamos por más!' },
+        { img: 'mascota4.png', texto: '¡Impresionante! Ya casi soy adulto. ¡Un módulo más!' },
+        { img: 'mascota5.png', texto: '¡Felicidades! Soy una mascota adulta gracias a ti.' }
+    ];
+
+    let moduloActual = 0;
+    let nombreEstudiante = "";
+
+    function guardarProgreso(nombre, modulo) {
+        let progresos = JSON.parse(localStorage.getItem('progresosAlumnos') || '{}');
+        progresos[nombre] = modulo;
+        localStorage.setItem('progresosAlumnos', JSON.stringify(progresos));
+        localStorage.setItem('nombreEstudiante', nombre);
+    }
+
+    function recuperarProgreso(nombre) {
+        let progresos = JSON.parse(localStorage.getItem('progresosAlumnos') || '{}');
+        return progresos[nombre] || 0;
+    }
+
+    window.onload = function() {
+        if (localStorage.getItem('nombreEstudiante')) {
+            nombreEstudiante = localStorage.getItem('nombreEstudiante');
+            moduloActual = recuperarProgreso(nombreEstudiante);
+            mostrarPaginaPrincipal();
+            actualizarMascota();
+        }
+    };
+
+    document.getElementById('login-btn').onclick = function() {
+        const nombre = document.getElementById('nombre-input').value.trim();
+        if (nombre.length > 0) {
+            nombreEstudiante = nombre;
+            moduloActual = recuperarProgreso(nombreEstudiante);
+            guardarProgreso(nombreEstudiante, moduloActual);
+            mostrarPaginaPrincipal();
+            actualizarMascota();
+        } else {
+            alert("Por favor, ingresa tu nombre.");
+        }
+    };
+
+    function mostrarPaginaPrincipal() {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+        document.getElementById('bienvenida').textContent = "¡Hola, " + nombreEstudiante + "! Sigue avanzando para ver crecer tu mascota.";
+    }
+
+    function actualizarMascota() {
+        const img = document.getElementById('mascota-img');
+        img.src = etapasMascota[moduloActual].img;
+        document.getElementById('mascota-text').textContent = etapasMascota[moduloActual].texto;
+        img.classList.remove('grow');
+        void img.offsetWidth;
+        img.classList.add('grow');
+    }
+
+    function cerrarSesion() {
+        localStorage.removeItem('nombreEstudiante');
+        nombreEstudiante = "";
+        moduloActual = 0;
+        document.getElementById('main-content').style.display = 'none';
+        document.getElementById('login-screen').style.display = 'flex';
+        document.getElementById('nombre-input').value = "";
+    }
+
+    function resetearProgreso() {
+        if (confirm("¿Estás seguro de que quieres restablecer tu progreso?")) {
+            guardarProgreso(nombreEstudiante, 0);
+            moduloActual = 0;
+            actualizarMascota();
+        }
+    }
+
+    // --- Botonera central inferior ---
+    const defaultFontSize = 16;
+    let currentFontSize = defaultFontSize;
+
+    function setRootFontSize(size) {
+        document.documentElement.style.fontSize = size + "px";
+    }
+    document.getElementById('btn-aumentar').onclick = function() {
+        if (currentFontSize < 28) {
+            currentFontSize += 2;
+            setRootFontSize(currentFontSize);
+        }
+    };
+    document.getElementById('btn-disminuir').onclick = function() {
+        if (currentFontSize > 12) {
+            currentFontSize -= 2;
+            setRootFontSize(currentFontSize);
+        }
+    };
+    document.getElementById('btn-restablecer').onclick = function() {
+        currentFontSize = defaultFontSize;
+        setRootFontSize(currentFontSize);
+    };
+    document.getElementById('btn-home').onclick = function() {
+        location.reload();
+    };
+    </script>
+</body>
+</html>

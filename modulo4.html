@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Módulo 1 - Escudo Digital</title>
+    <style>
+        html { font-size: 16px; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f8fb; }
+        .contenido-modulo {
+            max-width: 700px;
+            margin: 110px auto 100px auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 20px rgba(33,118,201,0.10);
+            padding: 40px;
+            text-align: center;
+        }
+        .finalizar-btn {
+            background: #27ae60;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 18px 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 40px;
+            transition: background 0.3s;
+        }
+        .finalizar-btn:hover {
+            background: #1e8449;
+        }
+        /* Botonera central inferior igual que en index.html */
+        #botonera-central {
+            position: fixed;
+            left: 50%;
+            bottom: 32px;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.95);
+            border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(33,118,201,0.08);
+            padding: 10px 24px;
+            display: flex;
+            gap: 18px;
+            z-index: 300;
+        }
+        .icon-btn {
+            background: #2176c9;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 1.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 1px 5px rgba(33,118,201,0.10);
+        }
+        .icon-btn:hover {
+            background: #185a99;
+            transform: scale(1.1);
+        }
+        @media (max-width: 600px) {
+            .contenido-modulo { padding: 18px; }
+            #botonera-central { padding: 6px 8px; gap: 8px; bottom: 12px; }
+            .icon-btn { width: 36px; height: 36px; font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="contenido-modulo">
+        <h1>Módulo 1: Seguridad en Internet</h1>
+        <p>
+            <!-- Aquí va el contenido educativo del módulo 1 -->
+            Aprende sobre contraseñas seguras, navegación responsable y mucho más.
+        </p>
+        <button class="finalizar-btn" id="finalizarModuloBtn">Finalizar módulo</button>
+        <div id="mensaje-finalizacion" style="color: #2176c9; font-weight: bold; margin-top: 18px;"></div>
+    </div>
+
+    <!-- Botonera central inferior -->
+    <div id="botonera-central">
+        <button class="icon-btn" id="btn-home" title="Inicio">🏠</button>
+        <button class="icon-btn" id="btn-aumentar" title="Aumentar texto">🔎➕</button>
+        <button class="icon-btn" id="btn-disminuir" title="Disminuir texto">🔎➖</button>
+        <button class="icon-btn" id="btn-restablecer" title="Restablecer texto">🔄</button>
+    </div>
+
+    <script>
+    // --- Botonera central inferior ---
+    const defaultFontSize = 16;
+    let currentFontSize = defaultFontSize;
+
+    function setRootFontSize(size) {
+        document.documentElement.style.fontSize = size + "px";
+    }
+
+    document.getElementById('btn-aumentar').onclick = function() {
+        if (currentFontSize < 28) {
+            currentFontSize += 2;
+            setRootFontSize(currentFontSize);
+        }
+    };
+    document.getElementById('btn-disminuir').onclick = function() {
+        if (currentFontSize > 12) {
+            currentFontSize -= 2;
+            setRootFontSize(currentFontSize);
+        }
+    };
+    document.getElementById('btn-restablecer').onclick = function() {
+        currentFontSize = defaultFontSize;
+        setRootFontSize(currentFontSize);
+    };
+    document.getElementById('btn-home').onclick = function() {
+        window.location.href = "index.html";
+    };
+
+    // --- Finalizar módulo ---
+    document.getElementById('finalizarModuloBtn').onclick = function() {
+        // Recupera el nombre del alumno actualmente logueado
+        let nombreEstudiante = localStorage.getItem('nombreEstudiante');
+        if (!nombreEstudiante) {
+            alert("Debes iniciar sesión desde el menú principal.");
+            return;
+        }
+        // Recupera el objeto de progresos
+        let progresos = JSON.parse(localStorage.getItem('progresosAlumnos') || '{}');
+        // Si el progreso del alumno es menor a 1, lo actualiza a 1 (para módulo 1)
+        if (!progresos[nombreEstudiante] || progresos[nombreEstudiante] < 4) {
+            progresos[nombreEstudiante] = 4;
+            localStorage.setItem('progresosAlumnos', JSON.stringify(progresos));
+            document.getElementById('mensaje-finalizacion').textContent = "¡Módulo finalizado! Ahora tu mascota crecerá en el menú principal.";
+        } else {
+            document.getElementById('mensaje-finalizacion').textContent = "Este módulo ya fue finalizado.";
+        }
+    };
+    </script>
+</body>
+</html>
